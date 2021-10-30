@@ -80,17 +80,13 @@ export class DBTaskService {
     createSesionData(sesion: any){
       console.log([sesion.Usuario, sesion.Password, sesion.Password2, sesion.segundo_apellido_materno, sesion.Active]);
 
-      sesion.Usuario = 'jorge';
-      sesion.Password = '1234';
-      sesion.Password2 = '1234';
-      sesion.segundo_apellido_materno = 'alfaro';
-      sesion.Active = 1;
+
 
 
       let sql = `INSERT INTO sesion_data(user_name, password, password2, segundo_apellido_materno, active)
       VALUES(?,?,?,?,?)`;
       console.log(sql);
-      return this.db.executeSql(sql, [sesion.Usuario, sesion.Password, sesion.Password2, sesion.segundo_apellido_materno, sesion.Active])
+      return this.db.executeSql(sql, [sesion.User_name, sesion.Password, sesion.Password2, sesion.segundo_apellido_materno, sesion.active])
         .then(response=>{
             console.log('EJecutto correctamente la insercion');
             console.log('Mostrar objeto response');
