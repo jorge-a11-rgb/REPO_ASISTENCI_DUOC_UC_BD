@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 /* eslint-disable @typescript-eslint/type-annotation-spacing */
 /* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
@@ -10,7 +11,7 @@ import {
   OnInit,
   ɵisDefaultChangeDetectionStrategy,
 } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationExtras } from '@angular/router';
 import {
   AlertController,
   AnimationController,
@@ -21,6 +22,7 @@ import { DBTaskService } from 'src/app/services/dbtask.service';
 import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { Sesion } from 'src/app/model/Sesion';
 import { Usuario } from 'src/app/model/Usuario';
+import { observable } from 'rxjs';
 
 @Component({
   selector: 'app-registro',
@@ -32,18 +34,18 @@ export class RegistroPage implements OnInit, AfterViewInit {
 
   public sesion: Sesion = new Sesion();
 
-
-  toastController: any;
   constructor(
     private router: Router,
     private activeroute: ActivatedRoute,
     private alertController: AlertController,
     private animationController: AnimationController,
-    private DBTaskService: DBTaskService
-  ) {this.sesion = new Sesion();
+    private DBTaskService: DBTaskService,
+    public toastController: ToastController
+  ) {
+    this.sesion = new Sesion();
     this.sesion.User_name = '';
-    this.sesion.Password = 0;
-    this.sesion.Password2= 0;
+    this.sesion.Password = null;
+    this.sesion.Password2 = null;
     this.sesion.segundo_apellido_materno = '';
   }
 
@@ -75,8 +77,19 @@ export class RegistroPage implements OnInit, AfterViewInit {
     sesion.Password = this.sesion.Password;
     sesion.Password2 = this.sesion.Password2;
     sesion.active = 1;
+    if (!this.validarUsuario(this.sesion)) {
 
+      return;
+    } else {
       this.DBTaskService.createSesionData(sesion);
+      this.presentToast('Usuario registrado');
+      const navigationExtras: NavigationExtras = {
+        state: {
+          sesion: this.sesion.User_name,
+        },
+      };
+      this.router.navigate(['/login'], navigationExtras);
+    }
   }
   public limpiarFormulario(): void {
     for (const [key, value] of Object.entries(this.sesion)) {
@@ -87,7 +100,7 @@ export class RegistroPage implements OnInit, AfterViewInit {
     const alert = await this.alertController.create({
       header: titulo,
       message: mensaje,
-      buttons: ['OK']
+      buttons: ['OK'],
     });
 
     await alert.present();
@@ -95,9 +108,15 @@ export class RegistroPage implements OnInit, AfterViewInit {
   async mostrarMensaje(mensaje: string, duracion?: number) {
     const toast = await this.toastController.create({
       message: mensaje,
-      duration: duracion ? duracion : 2000,
+      duration: duracion ? duracion : 6000,
+    });
+    toast.present();
+  }
+  async presentToast(message: string, duration?: number) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: duration ? duration : 2000,
     });
     toast.present();
   }
 }
-function createSesionData(sesion: any) {}

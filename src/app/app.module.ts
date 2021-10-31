@@ -11,14 +11,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { PreguntaClaveComponent } from './components/pregunta-clave/pregunta-clave.component';
-import { DatosBasicosComponent } from './components/datos-basicos/datos-basicos.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DBTaskService } from './services/dbtask.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthenticationService } from './services/authentication.service';
 import { Storage } from '@ionic/storage';
+
 @NgModule({
-  declarations: [AppComponent, DatosBasicosComponent, PreguntaClaveComponent],
+  declarations: [AppComponent,  PreguntaClaveComponent],
   entryComponents: [],
   imports: [HttpClientModule,BrowserModule, IonicModule.forRoot(), AppRoutingModule,
     BrowserAnimationsModule, FormsModule],
@@ -73,6 +73,7 @@ export class AppModule {
             console.log('Recorrer todas las filas y mostrar los nombres de usuarios.');
             for (let i = 0; i < data.rows.length; i++) {
               console.log(data.rows.item(i).user_name);
+              console.log(data.rows.item(i).password);
             }
           })
           .catch(e => {

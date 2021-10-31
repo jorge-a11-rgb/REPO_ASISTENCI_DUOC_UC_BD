@@ -1,18 +1,10 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit } from '@angular/core';
+import { ToastController, AlertController } from '@ionic/angular';
 
-import { Router, NavigationExtras } from '@angular/router';
-
-import { ToastController } from '@ionic/angular';
-import { Usuario } from 'src/app/model/Usuario';
-
-import { AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { AlertController } from '@ionic/angular';
-import { $ } from 'protractor';
-
-import { createAnimation } from '@ionic/angular';
-import { Animation, AnimationController } from '@ionic/angular';
 import { DBTaskService } from 'src/app/services/dbtask.service';
+import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
@@ -21,121 +13,132 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit, AfterViewInit {
-  @ViewChild('titulo', { read: ElementRef, static: true }) titulo: ElementRef;
-  @ViewChild('titulo2', { read: ElementRef, static: true }) titulo2: ElementRef;
-  field: any;
-  public usuario: Usuario;
-
+export class LoginPage implements OnInit {
+  // Modelo user que permite obtener y setear información para el login
+  login: any = {
+    // eslint-disable-next-line @typescript-eslint/quotes
+    Usuario: '',
+    // eslint-disable-next-line @typescript-eslint/quotes
+    Password: '',
+    // eslint-disable-next-line @typescript-eslint/semi
+  };
+  // variable para mostrar el campo faltante
+  // eslint-disable-next-line @typescript-eslint/quotes
+  field: string = '';
+  // Constructor que llama al toastController para su uso
   constructor(
+    public toastController: ToastController,
+    public dbtaskService: DBTaskService,
+    public alertController: AlertController,
     private router: Router,
-    private toastController: ToastController,
-    private activeroute: ActivatedRoute,
-    private alertController: AlertController,
-    private animationController: AnimationController,
-    private dbtaskService: DBTaskService,
     private storage: Storage,
-    private authenticationSerive: AuthenticationService
-  ) {
-    this.usuario = new Usuario();
-    this.usuario.User_name = '';
-    this.usuario.Password = '';
-  }
-  public ngAfterViewInit(): void {
-    // eslint-disable-next-line prefer-const
-    let animation = this.animationController
-      .create()
-      .addElement(this.titulo.nativeElement)
-      .addElement(this.titulo2.nativeElement)
-
-      .duration(1500)
-      .fromTo('opacity', 0.1, 1);
-
-    document.querySelector('#limpiar1').addEventListener('click', () => {
-      animation.play();
-    });
-  }
-  public ngOnInit(): void {}
-
-  public ingresar(): void {
-    if (!this.validarUsuario(this.usuario)) {
-      return;
-    }
-
-    this.mostrarMensaje('¡Bienvenido!');
-
-    const navigationExtras: NavigationExtras = {
-      state: {
-        usuario: this.usuario.User_name,
-      },
-    };
-    this.router.navigate(['/home'], navigationExtras);
-  }
-
-  public registrar() {
-    this.createSesionData(this.usuario);
-  }
-  /*** Función que genera (registra) una nueva sesión
-   * @param login
+    public authenticationSerive: AuthenticationService
+  ) {}
+  ngOnInit() {}
+  /**
+   * Función que permite el inicio de sesión y acceder
+   * al Home
    */
-  public createSesionData(usuario: any) {
-    if (this.validateModel(usuario)) {
-      const copy = Object.assign({}, usuario);
-      copy.Active = 1;
-      this.dbtaskService
-        .createSesionData(copy)
-        .then((data) => {
-          this.presentToast('Bienvenido');
-          this.storage.set('USER_DATA', data);
-          this.router.navigate(['/home']);
-        })
-        .catch((error1) => {
-          this.presentToast('El usuario ya existe');
-          console.log(error1);
-        });
+  ingresar() {
+    // Se valida que el usuario ingreso todos los datos
+    if (this.validateModel(this.login)) {
+      // Se obtiene si existe alguna data de sesión
+      this.authenticationSerive.login(this.login);
     } else {
+      // eslint-disable-next-line @typescript-eslint/quotes
       this.presentToast('Falta: ' + this.field);
     }
   }
-
-  public validateModel(model: any) {
-    for (const [key, value] of Object.entries(model)) {
+  registrar() {
+    this.createSesionData(this.login);
+  }
+  /**
+   * Función que genera (registra) una nueva sesión
+   * @param login
+   */
+  createSesionData(login: any) {
+    if (this.validateModel(login)) {
+      // Se valida que se ingresen todos los datos
+      /**
+       * Se hace una copia del login, se hace así ya que
+       * el operador '=' no haceuna copia de los datos, si no
+       * que crea una nueva referencia a los mismos datos.
+       * Por eso se utiliza el Object.assign
+       */
+      // eslint-disable-next-line prefer-const
+      let copy = Object.assign({}, login);
+      copy.Active = 1; // Se agrega el valor active = 1 a la copia
+      this.dbtaskService
+        .createSesionData(copy) // la copia se le apsa a la función para crear la sesion
+        .then((data) => {
+          // si la sentencia se ejecuto correctamente
+          // eslint-disable-next-line @typescript-eslint/quotes
+          this.presentToast('Bienvenido'); // Se muestra el mensaje de bienvenido
+          // eslint-disable-next-line @typescript-eslint/quotes
+          this.storage.set('USER_DATA', data); // Se setea el USER_DATA en el storage
+          this.router.navigate(['home']); // Se navega hasta el home
+        })
+        .catch((error) => {
+          // eslint-disable-next-line @typescript-eslint/quotes
+          this.presentToast('El usuario ya existe');
+        });
+    } else {
+      // eslint-disable-next-line @typescript-eslint/quotes
+      this.presentToast('Falta: ' + this.field);
+    }
+  }
+  /**
+   * validateModel sirve para validar que se ingrese algo en los
+   * campos del html mediante su modelo
+   */
+  validateModel(model: any) {
+    // Recorro todas las entradas que me entrega Object entries y obtengo su clave, valor
+    // eslint-disable-next-line no-var
+    for (var [key, value] of Object.entries(model)) {
+      // Si un valor es "" se retornara false y se avisara de lo faltante
+      // eslint-disable-next-line @typescript-eslint/quotes
       if (value === '') {
+        // Se asigna el campo faltante
         this.field = key;
+        // Se retorna false
         return false;
       }
     }
     return true;
   }
-  /*** Muestra un toast al usuario
+  /**
+   * Muestra un toast al usuario
    * @param message Mensaje a presentar al usuario
    * @param duration Duración el toast, este es opcional
    */
   async presentToast(message: string, duration?: number) {
     const toast = await this.toastController.create({
-      message,
+      // eslint-disable-next-line object-shorthand
+      message: message,
       duration: duration ? duration : 2000,
     });
     toast.present();
   }
-
-  public ionViewWillEnter() {
-    // console.log('ionViewWillEnter');
-    // this.dbtaskService
-    //   .sesionActive()
-    //   .then(
-    //     (data) => {
-    //     if (data !== undefined) {
-    //       this.storage.set('USER_DATA', data);
-    //       this.router.navigate(['home']);
-    //     }
-    //   })
-    //   .catch((error2) => {
-    //     console.error(error2);
-    //     this.router.navigate(['login']);
-    //   });
+  /**
+   * Función parte del ciclo de vida de un componente
+   */
+  ionViewWillEnter() {
+    console.log('ionViewDidEnter');
+    // Se valida que exista una sesión activa
+    this.dbtaskService
+      .sesionActive()
+      .then((data) => {
+        if (data !== undefined) {
+          // eslint-disable-next-line @typescript-eslint/quotes
+          this.storage.set('USER_DATA', data);
+          this.router.navigate(['home']);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        this.router.navigate(['login']);
+      });
   }
-
   async presentAlertConfirm() {
     const alert = await this.alertController.create({
       header: 'Creación de Usuario',
@@ -149,41 +152,17 @@ export class LoginPage implements OnInit, AfterViewInit {
         {
           text: 'SI',
           handler: () => {
-            this.createSesionData(this.usuario);
+            this.createSesionData(this.login);
           },
         },
       ],
     });
+
     await alert.present();
   }
-
-  public validarUsuario(usuario: Usuario): boolean {
-    const mensajeError = usuario.validarUsuario();
-
-    if (mensajeError) {
-      this.mostrarMensaje(mensajeError);
-      return false;
-    }
-
-    return true;
-  }
-
-  /**
-   * Muestra un toast al usuario
-   *
-   * @param mensaje Mensaje a presentar al usuario
-   * @param duracion Duración el toast, este es opcional
-   */
-  async mostrarMensaje(mensaje: string, duracion?: number) {
-    const toast = await this.toastController.create({
-      message: mensaje,
-      duration: duracion ? duracion : 2000,
-    });
-    toast.present();
-  }
   public limpiarFormulario(): void {
-    for (const [key, value] of Object.entries(this.usuario)) {
-      Object.defineProperty(this.usuario, key, { value: '' });
+    for (const [key, value] of Object.entries(this.login)) {
+      Object.defineProperty(this.login, key, { value: '' });
     }
   }
 }
