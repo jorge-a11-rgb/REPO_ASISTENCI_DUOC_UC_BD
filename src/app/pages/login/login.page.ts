@@ -7,6 +7,7 @@ import { DBTaskService } from 'src/app/services/dbtask.service';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Usuario_pass } from 'src/app/model/Usuario_pass';
 
 @Component({
   selector: 'app-login',
@@ -14,18 +15,11 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  // Modelo user que permite obtener y setear información para el login
-  login: any = {
-    // eslint-disable-next-line @typescript-eslint/quotes
-    Usuario: '',
-    // eslint-disable-next-line @typescript-eslint/quotes
-    Password: '',
-    // eslint-disable-next-line @typescript-eslint/semi
-  };
-  // variable para mostrar el campo faltante
-  // eslint-disable-next-line @typescript-eslint/quotes
+
+  public us: Usuario_pass = new Usuario_pass();
+
   field: string = '';
-  // Constructor que llama al toastController para su uso
+
   constructor(
     public toastController: ToastController,
     public dbtaskService: DBTaskService,
@@ -33,7 +27,9 @@ export class LoginPage implements OnInit {
     private router: Router,
     private storage: Storage,
     public authenticationSerive: AuthenticationService
-  ) {}
+  ) {this.us = new Usuario_pass();
+  this.us.nombreUsuario = '';
+this.us.clave = null;}
   ngOnInit() {}
   /**
    * Función que permite el inicio de sesión y acceder
@@ -41,19 +37,18 @@ export class LoginPage implements OnInit {
    */
   ingresar() {
     // Se valida que el usuario ingreso todos los datos
-    if (this.validateModel(this.login)) {
+    if (this.validateModel(this.us)) {
       // Se obtiene si existe alguna data de sesión
-      this.authenticationSerive.login(this.login);
+      this.authenticationSerive.login(this.us);
     } else {
       // eslint-disable-next-line @typescript-eslint/quotes
       this.presentToast('Falta: ' + this.field);
     }
   }
   registrar() {
-    this.createSesionData(this.login);
+    this.createSesionData(this.us);
   }
-  /**
-   * Función que genera (registra) una nueva sesión
+  /*** Función que genera (registra) una nueva sesión
    * @param login
    */
   createSesionData(login: any) {
@@ -106,8 +101,7 @@ export class LoginPage implements OnInit {
     }
     return true;
   }
-  /**
-   * Muestra un toast al usuario
+  /*** Muestra un toast al usuario
    * @param message Mensaje a presentar al usuario
    * @param duration Duración el toast, este es opcional
    */
@@ -122,19 +116,17 @@ export class LoginPage implements OnInit {
   /**
    * Función parte del ciclo de vida de un componente
    */
-  ionViewWillEnter() {
+   ionViewWillEnter(){
     console.log('ionViewDidEnter');
-    // Se valida que exista una sesión activa
-    this.dbtaskService
-      .sesionActive()
-      .then((data) => {
-        if (data !== undefined) {
-          // eslint-disable-next-line @typescript-eslint/quotes
-          this.storage.set('USER_DATA', data);
+      // Se valida que exista una sesión activa
+      this.dbtaskService.sesionActive()
+      .then((data)=>{
+        if(data!==undefined){
+          this.storage.set('USER_DATA',data);
           this.router.navigate(['home']);
         }
       })
-      .catch((error) => {
+      .catch((error)=>{
         console.error(error);
         this.router.navigate(['login']);
       });
@@ -152,7 +144,7 @@ export class LoginPage implements OnInit {
         {
           text: 'SI',
           handler: () => {
-            this.createSesionData(this.login);
+            this.createSesionData(this.us);
           },
         },
       ],
@@ -161,8 +153,8 @@ export class LoginPage implements OnInit {
     await alert.present();
   }
   public limpiarFormulario(): void {
-    for (const [key, value] of Object.entries(this.login)) {
-      Object.defineProperty(this.login, key, { value: '' });
+    for (const [key, value] of Object.entries(this.us)) {
+      Object.defineProperty(this.us, key, { value: '' });
     }
   }
 }

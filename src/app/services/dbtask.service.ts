@@ -50,25 +50,24 @@ export class DBTaskService {
    */
 
 
-    sesionActive(){
-      // Se desarrolla la consulta
-      let sql = `SELECT user_name,active FROM sesion_data WHERE active=1 LIMIT 1`;
-      // Se ejecuta la consulta y no le pasamos parametros [value,value1,...]
-      console.log(sql);
-      return this.db.executeSql(sql,[])
-      // Cuando se ejecute la consulta
-      .then(response=>{ // obtenemos lo que devuelve la consulta
-        return Promise.resolve(response.rows.item(0)); // Se obtiene el primer item de la consulta y se retorna
-      });
-    }
+
+   sesionActive(){
+    // Se desarrolla la consulta
+    let sql = `SELECT user_name,active FROM sesion_data WHERE active=1 LIMIT 1`;
+    // Se ejecuta la consulta y no le pasamos parametros [value,value1,...]
+    return this.db.executeSql(sql,[])
+    // Cuando se ejecute la consulta
+    .then(response=>{ // obtenemos lo que devuelve la consulta
+      return Promise.resolve(response.rows.item(0)); // Se obtiene el primer item de la consulta y se retorna
+    });
+  }
 
     /*** Función que valida la existencia del usuario que esta iniciando sesión
      * @param sesion Datos de inicio de sesión Usuario y Password
      */
-    getSesionData(sesion: any){
+     getSesionData(sesion: any){
       let sql = `SELECT user_name, active FROM sesion_data
       WHERE user_name=? AND password=? LIMIT 1`;
-      console.log(sql);
       return this.db.executeSql(sql,[sesion.Usuario,
         sesion.Password]).then(response=>{
           return Promise.resolve(response.rows.item(0));
@@ -98,11 +97,10 @@ export class DBTaskService {
             return Promise.resolve(response.rows.item(0));
           });
      }
-    updateSesionData(sesion: any){
+     updateSesionData(sesion: any){
       let sql = `UPDATE sesion_data
       SET active=?
       WHERE user_name=?`;
-      console.log(sql);
       return this.db.executeSql(sql, [sesion.active,sesion.user_name]);
     }
   }

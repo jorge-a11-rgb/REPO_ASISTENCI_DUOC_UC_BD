@@ -33,7 +33,7 @@
 
           <ion-input
             type="text"
-            [(ngModel)]="login.Usuario"
+            [(ngModel)]="us.nombreUsuario"
           ></ion-input>
         </ion-item>
         <ion-item #titulo2>
@@ -41,7 +41,7 @@
 
           <ion-input
             type="password"
-            [(ngModel)]="login.Password"
+            [(ngModel)]="us.clave"
             #titulo
           ></ion-input>
         </ion-item>
@@ -58,6 +58,7 @@
               Limpiar
             </ion-button>
           </ion-col>
+
         </ion-row>
       </ion-card-content>
 
@@ -65,10 +66,16 @@
         <br />
         <a routerLink="/pass">Si olvidaste tu contraseña, haz clicl aqui</a>
       </ion-label>
+      <div class="ion-text-center ion-padding-vertical">
+        <p>------------------------------------</p>
+      </div>
       <ion-label>
         <br />
         <a routerLink="/formulario">Mas informacion, haz clicl aqui</a>
       </ion-label>
+      <div class="ion-text-center ion-padding-vertical">
+        <p>------------------------------------</p>
+      </div>
       <ion-label>
         <br />
         <a routerLink="/registro">Eres nuevo en el duoc?, haz clic aqui</a>
