@@ -35,9 +35,24 @@ const routes: Routes = [
     loadChildren: () => import('./pages/registro/registro.module').then( m => m.RegistroPageModule)
   },
   {
+    path: 'userlist',
+    loadChildren: () => import('./pages/userlist/userlist.module').then( m => m.UserlistPageModule)
+  },
+  {
+    path: 'userlist',
+    loadChildren: () => import('./pages/userlist/userlist.module').then( m => m.UserlistPageModule)
+  },
+  {
+    path: 'profile/:id',
+    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+  },
+  {
     path: '**',
     loadChildren: () => import('./pages/not-found/not-found.module').then( m => m.NotFoundPageModule)
   },
+
+
+
 
 ];
 
