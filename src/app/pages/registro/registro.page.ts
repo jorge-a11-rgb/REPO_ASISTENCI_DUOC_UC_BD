@@ -62,8 +62,7 @@ export class RegistroPage implements OnInit, AfterViewInit {
   }
   public validarUsuario(sesion: Sesion): boolean {
     const mensajeError = sesion.validarUsuario();
-
-    if (mensajeError) {
+    if (mensajeError !== undefined && mensajeError!=='') {
       this.mostrarMensaje(mensajeError);
       return false;
     }

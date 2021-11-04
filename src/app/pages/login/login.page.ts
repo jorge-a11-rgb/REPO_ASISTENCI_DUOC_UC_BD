@@ -26,7 +26,7 @@ export class LoginPage implements OnInit {
     public alertController: AlertController,
     private router: Router,
     private storage: Storage,
-    public authenticationSerive: AuthenticationService
+    public authenticationService: AuthenticationService
   ) {this.us = new Usuario_pass();
   this.us.nombreUsuario = '';
 this.us.clave = null;}
@@ -39,7 +39,7 @@ this.us.clave = null;}
     // Se valida que el usuario ingreso todos los datos
     if (this.validateModel(this.us)) {
       // Se obtiene si existe alguna data de sesión
-      this.authenticationSerive.login(this.us);
+      this.authenticationService.login(this.us);
     } else {
       // eslint-disable-next-line @typescript-eslint/quotes
       this.presentToast('Falta: ' + this.field);

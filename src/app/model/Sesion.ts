@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 export class Sesion {
   public User_name: string;
-  public Password: number;
-  public Password2: number;
+  public Password: string;
+  public Password2: string;
 public segundo_apellido_materno: string;
 public active = 1;
 
@@ -17,10 +17,10 @@ public active = 1;
   }
 
   public validarPassword(): string {
-    if (this.User_name.trim() === '') {
+    if (this.Password.trim() === '') {
       return 'Para entrar al sistema debe ingresar la contraseña';
     }
-    if(this.Password2 !== this.Password){
+    if(this.Password !== this.Password2){
       return 'Las claves deben ser iguales';
     }
   }

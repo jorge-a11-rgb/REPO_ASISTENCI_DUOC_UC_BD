@@ -59,8 +59,8 @@ export class PassPage implements OnInit, AfterViewInit {
     public toastController: ToastController
   ) {
     this.sesion = new Sesion();
-    this.sesion.Password = 0;
-    this.sesion.Password2 = 0;
+    this.sesion.Password = '';
+    this.sesion.Password2 = '';
     this.sesion.User_name = '';
     this.sesion.segundo_apellido_materno = '';
     this.active = 1;

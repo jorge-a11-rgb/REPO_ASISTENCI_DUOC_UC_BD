@@ -80,8 +80,10 @@ export class AuthenticationService {
   }
   login(login: any){
     // Se obtiene si existe alguna data de sesión
+    console.log("login",login)
     this.dbtaskService.getSesionData(login)
-    .then((data)=>{ // Si se ejecuto correctamente la consulta
+    .then((data)=>{
+      console.log("sesion_paso",data) // Si se ejecuto correctamente la consulta
       if(data===undefined){ // Si es undefined es por que no retorno firmas
         this.presentToast("Credenciales Incorrectas");
       }else{ // Si no es undefined es por que el usuario y la password coincidieron con algun registro

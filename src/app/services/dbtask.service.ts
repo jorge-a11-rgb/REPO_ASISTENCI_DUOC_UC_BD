@@ -34,13 +34,23 @@ export class DBTaskService {
     let tables = `
     CREATE TABLE IF NOT EXISTS sesion_data
     (
+      user_name VARCHAR(50) NOT NULL,
+      password VARCHAR(50) NOT NULL,
+      password2 VARCHAR(50) NOT NULL,
+      segundo_apellido_materno VARCHAR(50) NOT NULL,
+      active INTEGER(1) NOT NULL
+    );
+    `;
+    /*let tables = `
+    CREATE TABLE IF NOT EXISTS sesion_data
+    (
       user_name TEXT NOT NULL,
       password INTEGER NOT NULL,
       password2 INTEGER NOT NULL,
       segundo_apellido_materno NOT NULL,
       active INTEGER(1) NOT NULL
     );
-    `;
+    `;*/
     console.log('createTables');
     return this.db.executeSql(tables);
   }
@@ -66,10 +76,11 @@ export class DBTaskService {
      * @param sesion Datos de inicio de sesión Usuario y Password
      */
      getSesionData(sesion: any){
+       console.log(sesion)
       let sql = `SELECT user_name, active FROM sesion_data
-      WHERE user_name=? AND password=? LIMIT 1`;
-      return this.db.executeSql(sql,[sesion.Usuario,
-        sesion.Password]).then(response=>{
+      WHERE user_name=? LIMIT 1`;
+      return this.db.executeSql(sql,[sesion.nombreUsuario]).then(response=>{
+          console.log('sesion_data',response)
           return Promise.resolve(response.rows.item(0));
         });
     }
@@ -77,13 +88,14 @@ export class DBTaskService {
      * @param sesion Datos de inicio de sesión Usuario, Password y Active
      */
     createSesionData(sesion: any){
-      console.log([sesion.Usuario, sesion.Password, sesion.Password2, sesion.segundo_apellido_materno, sesion.Active]);
+      console.log(sesion)
+      /*console.log([sesion.Usuario, sesion.Password, sesion.Password2, sesion.segundo_apellido_materno, sesion.Active]);*/
 
 
 
 
-      let sql = `INSERT INTO sesion_data(user_name, password, password2, segundo_apellido_materno, active)
-      VALUES(?,?,?,?,?)`;
+      let sql = `INSERT INTO sesion_data (user_name, password, password2, segundo_apellido_materno, active)
+      VALUES(?,?,?,?,?);`;
       console.log(sql);
       return this.db.executeSql(sql, [sesion.User_name, sesion.Password, sesion.Password2, sesion.segundo_apellido_materno, sesion.active])
         .then(response=>{
