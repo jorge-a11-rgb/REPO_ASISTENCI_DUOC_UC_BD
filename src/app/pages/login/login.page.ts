@@ -127,6 +127,7 @@ this.us.clave = null;}
         }
       })
       .catch((error)=>{
+        console.log('No pudo obtener la sesiòn activa con this.dbtaskService.sesionActive()');
         console.error(error);
         this.router.navigate(['login']);
       });

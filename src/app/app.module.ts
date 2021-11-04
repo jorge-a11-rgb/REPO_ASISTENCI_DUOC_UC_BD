@@ -38,7 +38,7 @@ import { Storage } from '@ionic/storage';
 export class AppModule {
   private db: SQLiteObject;
 
-  constructor(private platform: Platform, private dbTaskService: DBTaskService) {
+  constructor(private platform: Platform, private dbTaskService: DBTaskService, private storage: Storage) {
 
     console.log('Verificar si la plataforma ya está lista para funcionar.');
     this.platform.ready().then(() => {
@@ -54,6 +54,7 @@ export class AppModule {
 
           console.log('Asignar la BD a una propiedad de la clase.');
           this.db = db;
+          this.storage.create();
           this.dbTaskService.setDatabase(db);
           this.dbTaskService.createTables();
           console.log('Seleccionar todos los registros de la tabla.');

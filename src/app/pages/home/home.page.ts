@@ -8,6 +8,7 @@ import { $ } from 'protractor';
 import { createAnimation } from '@ionic/angular';
 import { Animation, AnimationController } from '@ionic/angular';
 import { Usuario } from 'src/app/model/Usuario';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 
 
@@ -30,7 +31,8 @@ export class HomePage implements OnInit, AfterViewInit {
         private animationController: AnimationController
         ,private router: Router
         ,private activateroute: ActivatedRoute
-        ,private alterControler: AlertController) {
+        ,private alterControler: AlertController
+        ,public authenticationService: AuthenticationService) {
           if (this.router.getCurrentNavigation().extras.state) {
             this.usuario = this.router.getCurrentNavigation().extras.state.usuario;
           }
@@ -53,6 +55,10 @@ ngOnInit() {
   console.log('Ejecutando ngOnInit');
 }
 
+cerrarSesion() {
+  alert(1);
+  this.authenticationService.logout();
+}
 
 
 }

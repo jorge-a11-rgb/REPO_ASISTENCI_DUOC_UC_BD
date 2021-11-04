@@ -69,6 +69,9 @@ export class DBTaskService {
     // Cuando se ejecute la consulta
     .then(response=>{ // obtenemos lo que devuelve la consulta
       return Promise.resolve(response.rows.item(0)); // Se obtiene el primer item de la consulta y se retorna
+    }).catch(error => {
+      console.log('No fue capaz de ejecutar el SELECT');
+      console.log(error);
     });
   }
 
